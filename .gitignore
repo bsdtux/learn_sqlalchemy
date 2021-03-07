@@ -1,0 +1,16 @@
+# IDE 
+.vscode
+.idea
+
+# Virtual environment
+env
+venv
+
+# Mac OS X ds store file
+.DS_Store
+
+# Database files
+*.db
+
+# Remove pycache
+__pycache__
