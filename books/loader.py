@@ -16,6 +16,10 @@ def main(session: Session) -> None:
         for row in csv_reader:
             publish_date = dt.datetime.strptime(row[2], "%B %d, %Y").date()
             book = Book(title=row[0], author=row[1], publish_date=publish_date, price=currency(row[3]))
+            book_in_db = session.query(Book).filter(Book.title == book.title).one_or_none()
+            if book_in_db:
+                print(f"Book: {book} is already in the database")
+                continue
             all_books.append(book)
         session.add_all(all_books)
         session.commit()
