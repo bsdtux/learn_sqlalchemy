@@ -1,19 +1,34 @@
-import sys
-from functools import partial
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from config import DB_URI
-from models import Base, Book
+from models import Book
+from utils import currency, sanitize_date
 
 
 def add_book(session: Session):
-    print("Adding Book")
+    title = input("Title: ")
+    author = input("Author: ")
+
+    publish_date = None
+    while not publish_date:
+        publish_date = sanitize_date(input("Date(Ex: October 25, 2017): "))
+
+    price = None
+    while not price:
+        price = currency(input("Price(Ex: 20.99): "))
+
+    new_book = Book(title=title, author=author, publish_date=publish_date, price=price)
+    session.add(new_book)
+    session.commit()
+    print(f"Book: {new_book} added")
 
 
 def get_all_books(session: Session):
-    print("Getting All Books")
+    for book in session.query(Book):
+        print(f"{book.id} | {book.title} | {book.author}")
+
+    input("\nPress Enter to return to main menu.")
 
 
 def search_book(session: Session):

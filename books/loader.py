@@ -1,12 +1,11 @@
 import csv
-import datetime as dt
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from config import DB_URI
 from models import Base, Book
-from utils import currency
+from utils import currency, sanitize_date
 
 
 def main(session: Session) -> None:
@@ -14,7 +13,7 @@ def main(session: Session) -> None:
         csv_reader = csv.reader(infile)
         all_books = list()
         for row in csv_reader:
-            publish_date = dt.datetime.strptime(row[2], "%B %d, %Y").date()
+            publish_date = sanitize_date(row[2])
             book = Book(title=row[0], author=row[1], publish_date=publish_date, price=currency(row[3]))
             book_in_db = session.query(Book).filter(Book.title == book.title).one_or_none()
             if book_in_db:
